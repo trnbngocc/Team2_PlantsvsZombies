@@ -27,3 +27,5 @@ plants-vs-zombies/bin/*.pdb
 # C++ build artifacts
 *.obj
 compile_commands.json
+# SCons cache
+.sconsign.dblite
