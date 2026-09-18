@@ -6,26 +6,42 @@
 namespace godot {
 
 void GameController::_bind_methods() {
-    ClassDB::bind_method(D_METHOD("get_sun_points"), &GameController::get_sun_points);
+    ClassDB::bind_method(D_METHOD("start_game"), &GameController::start_game);
+    ClassDB::bind_method(D_METHOD("pause_game"), &GameController::pause_game);
+    ClassDB::bind_method(D_METHOD("resume_game"), &GameController::resume_game);
     ClassDB::bind_method(
-        D_METHOD("add_sun_points", "amount"),
-        &GameController::add_sun_points
+        D_METHOD("finish_game", "won"),
+        &GameController::finish_game
     );
+    ClassDB::bind_method(D_METHOD("get_state"), &GameController::get_state);
 }
 
 void GameController::_ready() {
-    UtilityFunctions::print(
-        "PVZ C++ extension loaded. Initial sun: ",
-        sun_points
-    );
+    UtilityFunctions::print("PVZ core GameController is ready.");
 }
 
-int GameController::get_sun_points() const {
-    return sun_points;
+void GameController::start_game() {
+    state = GameState::PLAYING;
 }
 
-void GameController::add_sun_points(int amount) {
-    sun_points += amount;
+void GameController::pause_game() {
+    if (state == GameState::PLAYING) {
+        state = GameState::PAUSED;
+    }
+}
+
+void GameController::resume_game() {
+    if (state == GameState::PAUSED) {
+        state = GameState::PLAYING;
+    }
+}
+
+void GameController::finish_game(bool won) {
+    state = won ? GameState::VICTORY : GameState::DEFEAT;
+}
+
+int GameController::get_state() const {
+    return static_cast<int>(state);
 }
 
 } // namespace godot

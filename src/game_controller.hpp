@@ -7,8 +7,17 @@ namespace godot {
 class GameController : public Node {
     GDCLASS(GameController, Node)
 
+public:
+    enum class GameState {
+        SETUP,
+        PLAYING,
+        PAUSED,
+        VICTORY,
+        DEFEAT
+    };
+
 private:
-    int sun_points = 50;
+    GameState state = GameState::SETUP;
 
 protected:
     static void _bind_methods();
@@ -16,8 +25,12 @@ protected:
 public:
     void _ready() override;
 
-    int get_sun_points() const;
-    void add_sun_points(int amount);
+    void start_game();
+    void pause_game();
+    void resume_game();
+    void finish_game(bool won);
+
+    int get_state() const;
 };
 
 } // namespace godot
