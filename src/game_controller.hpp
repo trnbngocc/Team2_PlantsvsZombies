@@ -43,6 +43,7 @@ public:
     void finish_game(bool won);
 
     void add_entity(std::unique_ptr<pvz::Entity> entity);
+    void update_entities(double delta_seconds);
 
     int get_state() const;
 };

@@ -50,6 +50,14 @@ void GameController::add_entity(
     entities.push_back(std::move(entity));
 }
 
+void GameController::update_entities(double delta_seconds) {
+    for (const auto& entity : entities) {
+        if (entity != nullptr && entity->is_alive()) {
+            entity->update(delta_seconds);
+        }
+    }
+}
+
 int GameController::get_state() const {
     return static_cast<int>(state);
 }
