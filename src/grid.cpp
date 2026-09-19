@@ -24,6 +24,7 @@ bool Grid::occupy(GridPosition position) {
 void Grid::release(GridPosition position) {
     if (is_valid(position)) {
         occupied_cells[position.row][position.column] = false;
+        plant_at[position.row][position.column] = nullptr;
     }
 }
 
