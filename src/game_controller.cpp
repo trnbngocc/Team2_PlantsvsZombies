@@ -1,4 +1,5 @@
 #include "game_controller.hpp"
+#include "bullet.hpp"
 
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
@@ -48,6 +49,20 @@ void GameController::add_entity(
     }
 
     entities.push_back(std::move(entity));
+}
+
+void GameController::spawn_bullet(
+    int row,
+    float start_column,
+    int damage,
+    float speed_cells_per_second
+) {
+    add_entity(std::make_unique<pvz::Bullet>(
+        row,
+        start_column,
+        damage,
+        speed_cells_per_second
+    ));
 }
 
 void GameController::update_entities(double delta_seconds) {
