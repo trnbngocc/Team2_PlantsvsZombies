@@ -40,6 +40,16 @@ void GameController::finish_game(bool won) {
     state = won ? GameState::VICTORY : GameState::DEFEAT;
 }
 
+void GameController::add_entity(
+    std::unique_ptr<pvz::Entity> entity
+) {
+    if (entity == nullptr) {
+        return;
+    }
+
+    entities.push_back(std::move(entity));
+}
+
 int GameController::get_state() const {
     return static_cast<int>(state);
 }
