@@ -18,7 +18,7 @@ public:
     virtual EntityType get_type() const = 0;
     virtual void update(double delta_seconds) = 0;
 
-    void take_damage(int amount);
+    virtual void take_damage(int amount);
     bool is_alive() const;
     int get_health() const;
 

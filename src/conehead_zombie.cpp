@@ -3,6 +3,14 @@
 namespace pvz {
 
 ConeheadZombie::ConeheadZombie(GridPosition pos)
-    : Zombie(pos, /*health=*/370, /*damage=*/10, /*speed=*/0.15f) {}
+    : Zombie(
+        pos,
+        /*body_health=*/200,
+        /*damage=*/10,
+        /*speed=*/0.15f,
+        ArmorType::CONE,
+        /*armor_health=*/170
+    ) {
+}
 
 } // namespace pvz

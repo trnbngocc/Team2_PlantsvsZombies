@@ -7,25 +7,39 @@ namespace pvz {
 
 class Zombie : public Entity {
 public:
+    enum class ArmorType {
+        NONE,
+        CONE,
+        BUCKET
+    };
+
     Zombie(
         GridPosition initial_position,
         int initial_health,
         int initial_damage,
-        float initial_speed
+        float initial_speed,
+        ArmorType initial_armor = ArmorType::NONE,
+        int initial_armor_health = 0
     );
+
+    EntityType get_type() const override;
+    void update(double delta_seconds) override;
 
     int get_damage() const;
     float get_speed() const;
 
-    // MỚI: GameController gọi ngay khi spawn Zombie, để Zombie tự hỏi Grid
-    // được trong update() của chính nó.
+    ArmorType get_armor_type() const;
+    int get_armor_health() const;
+    bool has_armor() const;
+
+    void take_damage(int amount) override;
+
+    // GameController gọi ngay khi spawn Zombie,
+    // để Zombie có thể tự hỏi Grid trong update() của chính nó.
     void set_grid(Grid* grid_ref);
 
 protected:
-    // MỚI: logic di chuyển/tấn công dùng CHUNG cho cả 3 loại Zombie hiện có.
-    // Mỗi class con vẫn PHẢI tự viết update() (bắt buộc từ Entity), nhưng có
-    // thể chỉ gọi default_update(delta) nếu hành vi giống nhau — hoặc tự viết
-    // logic riêng nếu Zombie đó cần hành vi đặc biệt (VD: Zombie nhảy qua ô).
+    // Logic di chuyển/tấn công dùng chung cho Zombie.
     void default_update(double delta_seconds);
 
     int damage;
@@ -34,8 +48,12 @@ protected:
 
 private:
     double attack_cooldown = 0.0;
-    static constexpr double ATTACK_INTERVAL = 1.0; // mỗi 1 giây cắn 1 lần khi bị chặn
+    static constexpr double ATTACK_INTERVAL = 1.0;
+
     float column_position = 0.0f;
+
+    ArmorType armor_type;
+    int armor_health;
 };
 
 } // namespace pvz
