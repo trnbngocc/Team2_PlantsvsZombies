@@ -3,7 +3,14 @@
 namespace pvz {
 
 RegularZombie::RegularZombie(GridPosition pos)
-    // TODO (Zombie Developer): tinh chỉnh speed — hiện 0.15 ô/giây (~60s băng hết sân).
-    : Zombie(pos, /*health=*/200, /*damage=*/10, /*speed=*/0.15f) {}
+    : Zombie(
+        pos,
+        /*body_health=*/200,
+        /*damage=*/10,
+        /*speed=*/0.15f,
+        ArmorType::NONE,
+        /*armor_health=*/0
+    ) {
+}
 
 } // namespace pvz

@@ -3,6 +3,14 @@
 namespace pvz {
 
 BucketheadZombie::BucketheadZombie(GridPosition pos)
-    : Zombie(pos, /*health=*/650, /*damage=*/10, /*speed=*/0.13f) {}
+    : Zombie(
+        pos,
+        /*body_health=*/200,
+        /*damage=*/10,
+        /*speed=*/0.13f,
+        ArmorType::BUCKET,
+        /*armor_health=*/450
+    ) {
+}
 
 } // namespace pvz
