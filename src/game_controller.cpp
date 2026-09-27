@@ -68,14 +68,16 @@ void GameController::spawn_bullet(
 }
 
 void GameController::update_entities(double delta_seconds) {
-    // Bước 1: cập nhật mọi entity còn sống (giữ nguyên như code gốc)
     for (const auto& entity : entities) {
         if (entity != nullptr && entity->is_alive()) {
-            entity->update(delta_seconds);
+            entity->tick_status_effects(delta_seconds);
+
+            if (entity->is_alive()) {
+                entity->update(delta_seconds);
+            }
         }
     }
 
-    // Bước 2 (MỚI): cho mọi Plant còn sống cơ hội hành động (bắn/sinh Sun/nổ...)
     for (const auto& entity : entities) {
         if (entity != nullptr && entity->is_alive() &&
             entity->get_type() == pvz::EntityType::PLANT) {
@@ -83,13 +85,9 @@ void GameController::update_entities(double delta_seconds) {
         }
     }
 
-    // Bước 3 (MỚI): xử lý va chạm Bullet-Zombie
     resolve_bullet_collisions();
-
-    // Bước 4 (MỚI): dọn entity đã chết khỏi danh sách + khỏi Grid
     cleanup_dead_entities();
 }
-
 int GameController::get_state() const {
     return static_cast<int>(state);
 }

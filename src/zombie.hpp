@@ -32,7 +32,7 @@ public:
     int get_armor_health() const;
     bool has_armor() const;
 
-    void take_damage(int amount) override;
+    void receive_damage(int amount) override;
 
     // GameController gọi ngay khi spawn Zombie,
     // để Zombie có thể tự hỏi Grid trong update() của chính nó.

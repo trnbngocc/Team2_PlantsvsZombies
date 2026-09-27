@@ -49,16 +49,12 @@ bool Zombie::has_armor() const {
     return armor_type != ArmorType::NONE && armor_health > 0;
 }
 
-void Zombie::take_damage(int amount) {
-    if (amount <= 0 || !active) {
-        return;
-    }
+void Zombie::receive_damage(int amount) {
+    if (amount <= 0 || !active) return;
 
-    // Nếu Zombie còn giáp, sát thương sẽ đánh vào giáp trước.
     if (has_armor()) {
         armor_health = std::max(0, armor_health - amount);
 
-        // Giáp vỡ thì bỏ trạng thái giáp.
         if (armor_health == 0) {
             armor_type = ArmorType::NONE;
         }
@@ -66,8 +62,7 @@ void Zombie::take_damage(int amount) {
         return;
     }
 
-    // Không còn giáp thì sát thương đánh trực tiếp vào thân Zombie.
-    Entity::take_damage(amount);
+    Entity::receive_damage(amount);
 }
 
 void Zombie::set_grid(Grid* grid_ref) {
