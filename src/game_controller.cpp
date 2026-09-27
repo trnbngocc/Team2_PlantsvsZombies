@@ -105,9 +105,13 @@ bool GameController::place_plant(pvz::GridPosition pos, std::unique_ptr<pvz::Pla
         return false;
     }
 
+    // Chỉ thay đổi Sun và ownership sau khi Grid placement thành công.
+    if (!grid.place_plant(pos, plant.get())) {
+        return false;
+    }
+
     sun -= plant->get_cost();
-    grid.place_plant(pos, plant.get()); // Grid chỉ giữ raw pointer để tra cứu
-    entities.push_back(std::move(plant)); // entities giữ quyền sở hữu thật
+    entities.push_back(std::move(plant));
     return true;
 }
 
