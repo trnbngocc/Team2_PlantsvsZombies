@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://d3b1hfl57ctb0"]
 
-[ext_resource type="Texture2D" uid="uid://b52euysv3v4ur" path="res://assets/sunflower (1).png" id="1_r0om0"]
+[ext_resource type="Texture2D" uid="uid://b3ku4xf167xnw" path="res://assets/sưnn.png" id="1_r0om0"]
 
 [node name="Control" type="Control" unique_id=440363022]
 layout_mode = 3
@@ -12,10 +12,10 @@ grow_vertical = 2
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=419622426]
 layout_mode = 0
-offset_left = -58.0
-offset_top = -43.0
-offset_right = 782.0
-offset_bottom = 637.0
+offset_left = -63.0
+offset_top = -47.0
+offset_right = 777.0
+offset_bottom = 633.0
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("1_r0om0")
 
