@@ -3,6 +3,8 @@
 
 namespace pvz {
 
+// Peashooter: bắn đều mỗi INTERVAL giây khi có Zombie cùng hàng.
+// Mỗi phát có CRIT_CHANCE_PERCENT % là đạn chí mạng (damage x CRIT_MULTIPLIER).
 class Peashooter : public Plant {
 public:
     explicit Peashooter(GridPosition pos);
@@ -12,10 +14,19 @@ public:
     void act(godot::GameController& controller) override;
 
 private:
+    // ---- Thông số cân bằng (chỉnh ở đây) ----
+    static constexpr int    HEALTH              = 100;
+    static constexpr int    COST                = 100;
+    static constexpr double INTERVAL            = 1.5;  // giây giữa hai phát bắn
+    static constexpr int    BASE_DAMAGE         = 20;
+    static constexpr int    CRIT_MULTIPLIER     = 2;    // 20 -> 40
+    static constexpr int    CRIT_CHANCE_PERCENT = 20;   // 20% chí mạng
+
+    // Gieo xúc xắc: true nếu phát này là đạn chí mạng.
+    static bool roll_critical();
+
     double timer = 0.0;
-    static constexpr double INTERVAL = 1.5;
     bool ready = false;
-    int bullet_damage = 20;
 };
 
 } // namespace pvz
