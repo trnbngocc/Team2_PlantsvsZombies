@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://diik6fcylbh6l"
-path="res://.godot/imported/cherrybomb.png-31ee43df6475825066c50c8842cbb516.ctex"
+uid="uid://c2p5h50e4mrxj"
+path="res://.godot/imported/chilli.png-a0bc0d9f7518de32352a3dd455cb1e5e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cherrybomb.png"
-dest_files=["res://.godot/imported/cherrybomb.png-31ee43df6475825066c50c8842cbb516.ctex"]
+source_file="res://assets/chilli.png"
+dest_files=["res://.godot/imported/chilli.png-a0bc0d9f7518de32352a3dd455cb1e5e.ctex"]
 
 [params]
 

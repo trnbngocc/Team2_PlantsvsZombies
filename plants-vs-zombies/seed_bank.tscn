@@ -3,13 +3,15 @@
 [ext_resource type="Texture2D" uid="uid://b52euysv3v4ur" path="res://assets/sunflower (1).png" id="1_2unkb"]
 [ext_resource type="Texture2D" uid="uid://dwgqhwsbqq6o6" path="res://assets/pea.png" id="2_bgaly"]
 [ext_resource type="Texture2D" uid="uid://cagykvo78skfi" path="res://assets/wallnut (1).png" id="3_jhsbr"]
-[ext_resource type="Texture2D" uid="uid://diik6fcylbh6l" path="res://assets/cherrybomb.png" id="4_roona"]
+[ext_resource type="Texture2D" uid="uid://c2p5h50e4mrxj" path="res://assets/chilli.png" id="4_2unkb"]
 
 [node name="Control" type="Control" unique_id=1380353143]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -21.0
+offset_bottom = -21.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -31,7 +33,7 @@ offset_left = -17.0
 offset_top = -5.0
 offset_right = 823.0
 offset_bottom = 675.0
-scale = Vector2(0.15, 0.15)
+scale = Vector2(0.145, 0.145)
 texture = ExtResource("1_2unkb")
 
 [node name="Peashooter" type="Button" parent="HBoxContainer" unique_id=1530265892]
@@ -43,11 +45,11 @@ icon_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="HBoxContainer/Peashooter" unique_id=819055760]
 layout_mode = 0
-offset_left = 2.000002
-offset_top = 1.0
-offset_right = 1262.0
-offset_bottom = 1276.0
-scale = Vector2(0.07, 0.07)
+offset_left = 5.000002
+offset_top = 6.0
+offset_right = 1265.0
+offset_bottom = 1281.0
+scale = Vector2(0.065, 0.065)
 texture = ExtResource("2_bgaly")
 
 [node name="WallNut" type="Button" parent="HBoxContainer" unique_id=95198893]
@@ -59,17 +61,16 @@ icon_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="HBoxContainer/WallNut" unique_id=1389457351]
 layout_mode = 0
-offset_left = -3.0000005
-offset_top = -2.9999995
-offset_right = 857.0
-offset_bottom = 1097.0
-scale = Vector2(0.09, 0.09)
+offset_left = -2.0000005
+offset_right = 858.0
+offset_bottom = 1100.0
+scale = Vector2(0.085, 0.085)
 texture = ExtResource("3_jhsbr")
 
 [node name="CherryBomb" type="Button" parent="HBoxContainer" unique_id=432457655]
 custom_minimum_size = Vector2(70, 90)
 layout_mode = 2
-text = "CherryBomb"
+text = "Chili "
 icon_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="HBoxContainer/CherryBomb" unique_id=1300863917]
@@ -77,9 +78,9 @@ layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 0.92600006
-offset_left = -19.0
-offset_top = -9.0
-offset_right = 446.0
-offset_bottom = 346.66
-scale = Vector2(0.24, 0.24)
-texture = ExtResource("4_roona")
+offset_left = -12.99999
+offset_top = -21.0
+offset_right = 367.95642
+offset_bottom = 413.0513
+scale = Vector2(0.23, 0.23)
+texture = ExtResource("4_2unkb")
