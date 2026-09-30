@@ -75,7 +75,7 @@ public:
     // Peashooter gọi trong act()
     bool has_zombie_in_row(int row) const;
 
-    // CherryBomb (và các Plant khác cần danh sách Zombie thật) gọi trong act()
+    // ChiliPepper (và các Plant khác cần danh sách Zombie thật) gọi trong act()
     std::vector<pvz::Zombie*> get_zombies_in_row(int row) const;
 
     // Sunflower gọi trong act()
