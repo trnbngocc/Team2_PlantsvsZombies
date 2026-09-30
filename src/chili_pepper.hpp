@@ -3,13 +3,13 @@
 
 namespace pvz {
 
-// Cherry-bomb: bom nổ chậm.
+// Chili Pepper (Ớt Jalapeno): bom nổ chậm.
 //   Giai đoạn 1: đếm ngược FUSE_TIME giây (là một Plant bình thường, có thể bị Zombie cắn chết).
 //   Giai đoạn 2: nổ, gây Instant Damage lên mọi Zombie cùng hàng.
-//   Giai đoạn 3: Zombie còn sống bị gắn BURNING (DoT), rồi Cherry-bomb tự huỷ.
-class CherryBomb : public Plant {
+//   Giai đoạn 3: Zombie còn sống bị gắn BURNING (DoT), rồi Chili Pepper tự huỷ.
+class ChiliPepper : public Plant {
 public:
-    explicit CherryBomb(GridPosition pos);
+    explicit ChiliPepper(GridPosition pos);
 
     EntityType get_type() const override { return EntityType::PLANT; }
     void update(double delta_seconds) override; // đếm ngược ngòi nổ

@@ -1,12 +1,13 @@
-#include "cherrybomb.hpp"
+#include "chili_pepper.hpp"
 #include "game_controller.hpp"
+#include "zombie.hpp"
 
 namespace pvz {
 
-CherryBomb::CherryBomb(GridPosition pos)
+ChiliPepper::ChiliPepper(GridPosition pos)
     : Plant(pos, HEALTH, COST) {}
 
-void CherryBomb::update(double delta_seconds) {
+void ChiliPepper::update(double delta_seconds) {
     if (!is_alive() || fuse_finished) {
         return;
     }
@@ -17,7 +18,7 @@ void CherryBomb::update(double delta_seconds) {
     }
 }
 
-void CherryBomb::act(godot::GameController& controller) {
+void ChiliPepper::act(godot::GameController& controller) {
     // Chưa hết ngòi hoặc đã nổ rồi -> không làm gì.
     if (!fuse_finished || exploded) {
         return;
