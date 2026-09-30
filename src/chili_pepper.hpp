@@ -3,7 +3,7 @@
 
 namespace pvz {
 
-// Chili Pepper (Ớt Jalapeno): bom nổ chậm.
+// Chili Pepper: bom nổ chậm, thiêu đốt cả một hàng ngang.
 //   Giai đoạn 1: đếm ngược FUSE_TIME giây (là một Plant bình thường, có thể bị Zombie cắn chết).
 //   Giai đoạn 2: nổ, gây Instant Damage lên mọi Zombie cùng hàng.
 //   Giai đoạn 3: Zombie còn sống bị gắn BURNING (DoT), rồi Chili Pepper tự huỷ.
@@ -20,7 +20,9 @@ private:
     static constexpr int    HEALTH            = 100;   // máu cơ bản, có thể bị Zombie cắn chết trước khi nổ
     static constexpr int    COST              = 150;
     static constexpr double FUSE_TIME         = 2.0;   // giây đếm ngược
-    static constexpr int    EXPLOSION_DAMAGE  = 1800;  // Instant Damage
+    // Balance: 150 (không phải 1800) để Zombie thường (200 HP) sống sót sau nổ và
+    // thật sự bị BURNING (đúng flow "nổ -> còn sống -> cháy" đã thống nhất).
+    static constexpr int    EXPLOSION_DAMAGE  = 150;   // Instant Damage
     static constexpr double BURN_DURATION     = 3.0;   // giây
     static constexpr double BURN_TICK_INTERVAL = 0.5;  // giây / lần rút máu
     static constexpr int    BURN_TICK_DAMAGE  = 20;    // 6 tick x 20 = 120 damage

@@ -1,6 +1,5 @@
 #include "chili_pepper.hpp"
 #include "game_controller.hpp"
-#include "zombie.hpp"
 
 namespace pvz {
 
