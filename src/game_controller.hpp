@@ -7,6 +7,7 @@
 
 #include "entity.hpp"
 #include "grid.hpp"
+#include "sun_economy.hpp"
 #include "plant.hpp"   // MỚI
 #include "zombie.hpp"  // MỚI
 
@@ -32,6 +33,9 @@ private:
 
     // GameController owns the game board.
     pvz::Grid grid;
+
+    // GameController owns Sun drops on the battlefield.
+    pvz::SunEconomy sun_economy;
 
     int sun = 50; // MỚI — Sun khởi điểm
 
@@ -77,6 +81,11 @@ public:
     // Sunflower gọi trong act()
     void add_sun(int amount);
     int get_sun() const;
+
+    // SunEconomy interface
+    int spawn_sun(pvz::GridPosition pos, int value);
+    int collect_sun(int id);
+    const std::vector<pvz::SunDrop>& get_suns() const;
 
 private:
     void resolve_bullet_collisions(); // MỚI

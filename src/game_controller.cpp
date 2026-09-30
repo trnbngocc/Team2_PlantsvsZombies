@@ -68,6 +68,7 @@ void GameController::spawn_bullet(
 }
 
 void GameController::update_entities(double delta_seconds) {
+    sun_economy.update(delta_seconds);
     for (const auto& entity : entities) {
         if (entity != nullptr && entity->is_alive()) {
             entity->tick_status_effects(delta_seconds);
@@ -147,8 +148,28 @@ std::vector<pvz::Zombie*> GameController::get_zombies_in_row(int row) const {
 }
 
 void GameController::add_sun(int amount) { sun += amount; }
-int GameController::get_sun() const { return sun; }
 
+int GameController::get_sun() const {
+    return sun;
+}
+
+int GameController::spawn_sun(pvz::GridPosition pos, int value) {
+    return sun_economy.spawn_sun(pos, value);
+}
+
+int GameController::collect_sun(int id) {
+    const int value = sun_economy.collect_sun(id);
+
+    if (value > 0) {
+        sun += value;
+    }
+
+    return value;
+}
+
+const std::vector<pvz::SunDrop>& GameController::get_suns() const {
+    return sun_economy.get_suns();
+}
 void GameController::resolve_bullet_collisions() {
     // TODO (Core Architect): CELL_HIT_RADIUS có thể cần tinh chỉnh sau khi test thật.
     constexpr float CELL_HIT_RADIUS = 0.5f;
