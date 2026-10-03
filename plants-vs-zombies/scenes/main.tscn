@@ -1,3 +1,5 @@
 [gd_scene format=3 uid="uid://d3rjjvx01fw5k"]
 
 [node name="Main" type="Node2D" unique_id=1316590878]
+
+[node name="GameController" type="GameController" parent="." unique_id=120646614]
