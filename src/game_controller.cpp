@@ -2,6 +2,7 @@
 #include "bullet.hpp"
 
 #include <algorithm>
+
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
@@ -12,23 +13,59 @@ GameController::GameController()
 }
 
 void GameController::_bind_methods() {
-    ClassDB::bind_method(D_METHOD("start_game"), &GameController::start_game);
-    ClassDB::bind_method(D_METHOD("pause_game"), &GameController::pause_game);
-    ClassDB::bind_method(D_METHOD("resume_game"), &GameController::resume_game);
+    ClassDB::bind_method(
+        D_METHOD("start_game"),
+        &GameController::start_game
+    );
+
+    ClassDB::bind_method(
+        D_METHOD("pause_game"),
+        &GameController::pause_game
+    );
+
+    ClassDB::bind_method(
+        D_METHOD("resume_game"),
+        &GameController::resume_game
+    );
+
     ClassDB::bind_method(
         D_METHOD("finish_game", "won"),
         &GameController::finish_game
     );
-    ClassDB::bind_method(D_METHOD("get_state"), &GameController::get_state);
-    ClassDB::bind_method(D_METHOD("get_sun"), &GameController::get_sun);
+
+    ClassDB::bind_method(
+        D_METHOD("get_state"),
+        &GameController::get_state
+    );
+
+    ClassDB::bind_method(
+        D_METHOD("get_sun"),
+        &GameController::get_sun
+    );
 }
 
 void GameController::_ready() {
-    UtilityFunctions::print("PVZ core GameController is ready.");
+    UtilityFunctions::print(
+        "PVZ core GameController is ready."
+    );
+
+    // Start the first zombie wave when the scene enters the game.
+    start_game();
+
+    // Make sure Godot calls _process(delta).
+    set_process(true);
+}
+
+void GameController::_process(double delta) {
+    if (state == GameState::PLAYING) {
+        update_entities(delta);
+    }
 }
 
 void GameController::start_game() {
     state = GameState::PLAYING;
+
+    // Start the first zombie wave.
     wave_manager.start_wave(1);
 }
 
@@ -45,7 +82,9 @@ void GameController::resume_game() {
 }
 
 void GameController::finish_game(bool won) {
-    state = won ? GameState::VICTORY : GameState::DEFEAT;
+    state = won
+        ? GameState::VICTORY
+        : GameState::DEFEAT;
 }
 
 void GameController::add_entity(
@@ -64,17 +103,26 @@ void GameController::spawn_bullet(
     int damage,
     float speed_cells_per_second
 ) {
-    add_entity(std::make_unique<pvz::Bullet>(
-        row,
-        start_column,
-        damage,
-        speed_cells_per_second
-    ));
+    add_entity(
+        std::make_unique<pvz::Bullet>(
+            row,
+            start_column,
+            damage,
+            speed_cells_per_second
+        )
+    );
 }
 
 void GameController::update_entities(double delta_seconds) {
+    // ==================== SUN ====================
+
     sun_economy.update(delta_seconds);
+
+    // ==================== ZOMBIE WAVES ====================
+
     wave_manager.update(delta_seconds);
+
+    // ==================== ENTITY UPDATE ====================
 
     for (const auto& entity : entities) {
         if (entity != nullptr && entity->is_alive()) {
@@ -86,14 +134,23 @@ void GameController::update_entities(double delta_seconds) {
         }
     }
 
+    // ==================== PLANT ACTIONS ====================
+
     for (const auto& entity : entities) {
-        if (entity != nullptr && entity->is_alive() &&
+        if (entity != nullptr &&
+            entity->is_alive() &&
             entity->get_type() == pvz::EntityType::PLANT) {
+
             static_cast<pvz::Plant*>(entity.get())->act(*this);
         }
     }
 
+    // ==================== BULLET COLLISIONS ====================
+
     resolve_bullet_collisions();
+
+    // ==================== CLEANUP ====================
+
     cleanup_dead_entities();
 }
 
@@ -122,24 +179,35 @@ bool GameController::place_plant(
     }
 
     sun -= plant->get_cost();
+
     entities.push_back(std::move(plant));
+
     return true;
 }
 
-void GameController::add_zombie(std::unique_ptr<pvz::Zombie> zombie) {
+void GameController::add_zombie(
+    std::unique_ptr<pvz::Zombie> zombie
+) {
     if (zombie == nullptr) {
         return;
     }
 
+    // Zombie needs the Grid to detect Plants and attack them.
     zombie->set_grid(&grid);
-    entities.push_back(std::move(zombie));
-}
 
+    entities.push_back(std::move(zombie));
+
+    UtilityFunctions::print(
+        "GameController: Zombie added. Total entities = ",
+        static_cast<int>(entities.size())
+    );
+}
 bool GameController::has_zombie_in_row(int row) const {
     for (const auto& e : entities) {
         if (e->get_type() == pvz::EntityType::ZOMBIE &&
             e->is_alive() &&
             e->get_position().row == row) {
+
             return true;
         }
     }
@@ -147,14 +215,19 @@ bool GameController::has_zombie_in_row(int row) const {
     return false;
 }
 
-std::vector<pvz::Zombie*> GameController::get_zombies_in_row(int row) const {
+std::vector<pvz::Zombie*> GameController::get_zombies_in_row(
+    int row
+) const {
     std::vector<pvz::Zombie*> result;
 
     for (const auto& e : entities) {
         if (e->get_type() == pvz::EntityType::ZOMBIE &&
             e->is_alive() &&
             e->get_position().row == row) {
-            result.push_back(static_cast<pvz::Zombie*>(e.get()));
+
+            result.push_back(
+                static_cast<pvz::Zombie*>(e.get())
+            );
         }
     }
 
@@ -169,7 +242,10 @@ int GameController::get_sun() const {
     return sun;
 }
 
-int GameController::spawn_sun(pvz::GridPosition pos, int value) {
+int GameController::spawn_sun(
+    pvz::GridPosition pos,
+    int value
+) {
     return sun_economy.spawn_sun(pos, value);
 }
 
@@ -183,7 +259,8 @@ int GameController::collect_sun(int id) {
     return value;
 }
 
-const std::vector<pvz::SunDrop>& GameController::get_suns() const {
+const std::vector<pvz::SunDrop>&
+GameController::get_suns() const {
     return sun_economy.get_suns();
 }
 
@@ -193,23 +270,30 @@ void GameController::resolve_bullet_collisions() {
     for (const auto& be : entities) {
         if (be->get_type() != pvz::EntityType::BULLET ||
             !be->is_alive()) {
+
             continue;
         }
 
-        pvz::Bullet* bullet = static_cast<pvz::Bullet*>(be.get());
+        pvz::Bullet* bullet =
+            static_cast<pvz::Bullet*>(be.get());
 
         for (const auto& ze : entities) {
             if (ze->get_type() != pvz::EntityType::ZOMBIE ||
                 !ze->is_alive()) {
+
                 continue;
             }
 
-            if (ze->get_position().row != bullet->get_position().row) {
+            if (ze->get_position().row !=
+                bullet->get_position().row) {
+
                 continue;
             }
 
             float dx =
-                static_cast<float>(ze->get_position().column)
+                static_cast<float>(
+                    ze->get_position().column
+                )
                 - bullet->get_column();
 
             if (dx < 0) {
@@ -217,8 +301,14 @@ void GameController::resolve_bullet_collisions() {
             }
 
             if (dx <= CELL_HIT_RADIUS) {
-                ze->take_damage(bullet->get_damage());
-                bullet->take_damage(bullet->get_health());
+                ze->take_damage(
+                    bullet->get_damage()
+                );
+
+                bullet->take_damage(
+                    bullet->get_health()
+                );
+
                 break;
             }
         }
@@ -226,13 +316,18 @@ void GameController::resolve_bullet_collisions() {
 }
 
 void GameController::cleanup_dead_entities() {
+    // Remove dead plants from Grid first.
     for (const auto& e : entities) {
         if (!e->is_alive() &&
             e->get_type() == pvz::EntityType::PLANT) {
-            grid.remove_plant(e->get_position());
+
+            grid.remove_plant(
+                e->get_position()
+            );
         }
     }
 
+    // Remove all dead entities from ownership vector.
     entities.erase(
         std::remove_if(
             entities.begin(),

@@ -51,6 +51,9 @@ public:
 
     void _ready() override;
 
+    // Godot game loop.
+    void _process(double delta) override;
+
     void start_game();
     void pause_game();
     void resume_game();
@@ -69,33 +72,43 @@ public:
 
     int get_state() const;
 
-    // ==================== MỚI ====================
+    // ==================== PLANT ====================
 
-    // UI gọi khi người chơi đặt cây — tự kiểm tra ô trống + đủ Sun, tự trừ Sun,
-    // tự đăng ký vào Grid. Trả về false nếu không đặt được (không thêm vào entities).
-    bool place_plant(pvz::GridPosition pos, std::unique_ptr<pvz::Plant> plant);
+    // UI gọi khi người chơi đặt cây — tự kiểm tra ô trống + đủ Sun,
+    // tự trừ Sun, tự đăng ký vào Grid.
+    // Trả về false nếu không đặt được.
+    bool place_plant(
+        pvz::GridPosition pos,
+        std::unique_ptr<pvz::Plant> plant
+    );
 
-    // Zombie Developer / Wave Manager gọi khi spawn Zombie — tự gán Grid cho Zombie.
+    // ==================== ZOMBIE ====================
+
+    // Zombie Developer / Wave Manager gọi khi spawn Zombie —
+    // tự gán Grid cho Zombie.
     void add_zombie(std::unique_ptr<pvz::Zombie> zombie);
 
-    // Peashooter gọi trong act()
+    // Peashooter gọi trong act().
     bool has_zombie_in_row(int row) const;
 
-    // ChiliPepper (và các Plant khác cần danh sách Zombie thật) gọi trong act()
+    // ChiliPepper và các Plant khác cần danh sách Zombie thật
+    // gọi hàm này trong act().
     std::vector<pvz::Zombie*> get_zombies_in_row(int row) const;
 
-    // Sunflower gọi trong act()
+    // ==================== SUN ====================
+
+    // Sunflower gọi trong act().
     void add_sun(int amount);
     int get_sun() const;
 
-    // SunEconomy interface
+    // SunEconomy interface.
     int spawn_sun(pvz::GridPosition pos, int value);
     int collect_sun(int id);
     const std::vector<pvz::SunDrop>& get_suns() const;
 
 private:
-    void resolve_bullet_collisions(); // MỚI
-    void cleanup_dead_entities();     // MỚI
+    void resolve_bullet_collisions();
+    void cleanup_dead_entities();
 };
 
 } // namespace godot
