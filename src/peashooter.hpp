@@ -3,8 +3,9 @@
 
 namespace pvz {
 
-// Peashooter: bắn đều mỗi INTERVAL giây khi có Zombie cùng hàng.
-// Mỗi phát có CRIT_CHANCE_PERCENT % là đạn chí mạng (damage x CRIT_MULTIPLIER).
+// Peashooter: bắn đều mỗi INTERVAL giây khi có Zombie cùng hàng VÀ ở phía trước
+// (column >= vị trí Peashooter). Mỗi phát có CRIT_CHANCE_PERCENT % là đạn chí mạng
+// (damage x CRIT_MULTIPLIER).
 class Peashooter : public Plant {
 public:
     explicit Peashooter(GridPosition pos);

@@ -30,17 +30,24 @@ void Peashooter::act(godot::GameController& controller) {
     ready = false;
 
     GridPosition pos = get_position();
-    if (!controller.has_zombie_in_row(pos.row)) {
+
+    // Fix "bắn ngược": chỉ bắn khi có Zombie ở phía trước (column >= pos.column).
+    // Trước đây has_zombie_in_row(row) xét cả Zombie đã vượt qua Peashooter (đã ở
+    // phía sau), khiến cây bắn vô ích vì đạn bay về phía trước, không bao giờ
+    // trúng Zombie đã ở phía sau.
+    if (!controller.has_zombie_in_row(pos.row, static_cast<float>(pos.column))) {
         return;
     }
 
-    // Chỉ gieo xúc xắc khi thật sự bắn, để không "lãng phí" lượt roll.
+    // Chỉ gieo xác suất khi thật sự bắn, để không "lãng phí" lượt roll.
     const int current_damage =
         roll_critical() ? BASE_DAMAGE * CRIT_MULTIPLIER : BASE_DAMAGE;
 
+    // Đạn xuất phát ngay tại miệng Peashooter (+0.2f thay vì +1.0f) để có thể
+    // bắn trúng cả Zombie đang áp sát cắn cây.
     controller.spawn_bullet(
         pos.row,
-        static_cast<float>(pos.column) + 1.0f,
+        static_cast<float>(pos.column) + 0.2f,
         current_damage
     );
 }
