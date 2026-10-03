@@ -4,6 +4,9 @@
 #include <vector>
 
 #include <godot_cpp/classes/node.hpp>
+#include <godot_cpp/variant/array.hpp>
+#include <godot_cpp/variant/dictionary.hpp>
+
 
 #include "entity.hpp"
 #include "grid.hpp"
@@ -25,6 +28,13 @@ public:
         VICTORY,
         DEFEAT
     };
+    enum PlantType {
+        PEASHOOTER = 0,
+        SUNFLOWER = 1,
+        WALLNUT = 2,
+        CHILI_PEPPER = 3
+    };
+
 
 private:
     GameState state = GameState::SETUP;
@@ -45,6 +55,7 @@ private:
 
 protected:
     static void _bind_methods();
+
 
 public:
     GameController();
@@ -74,13 +85,25 @@ public:
 
     // ==================== PLANT ====================
 
-    // UI gọi khi người chơi đặt cây — tự kiểm tra ô trống + đủ Sun,
-    // tự trừ Sun, tự đăng ký vào Grid.
-    // Trả về false nếu không đặt được.
+    // Hàm đặt cây dùng để bind ra Godot (UI gọi trực tiếp từ GDScript)
+    bool place_plant_by_type(int row, int col, int plant_type);
+
+    // C++ core place_plant
     bool place_plant(
         pvz::GridPosition pos,
         std::unique_ptr<pvz::Plant> plant
     );
+
+    // ==================== UI / QUERY DATA ====================
+
+    // Trả về danh sách Sun đang rơi để UI vẽ
+    Array get_sun_drops() const;
+
+    // Trả về danh sách Zombie, Đạn, Cây để UI vẽ lên màn hình mỗi frame
+    Array get_zombies_data() const;
+    Array get_bullets_data() const;
+    Array get_plants_data() const;
+
 
     // ==================== ZOMBIE ====================
 

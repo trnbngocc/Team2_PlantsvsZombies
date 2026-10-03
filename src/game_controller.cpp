@@ -1,5 +1,10 @@
 #include "game_controller.hpp"
 #include "bullet.hpp"
+#include "peashooter.hpp"
+#include "sunflower.hpp"
+#include "wallnut.hpp"
+#include "chili_pepper.hpp"
+
 
 #include <algorithm>
 
@@ -42,6 +47,36 @@ void GameController::_bind_methods() {
         D_METHOD("get_sun"),
         &GameController::get_sun
     );
+        ClassDB::bind_method(
+        D_METHOD("place_plant", "row", "col", "type"),
+        &GameController::place_plant_by_type
+    );
+
+    ClassDB::bind_method(
+        D_METHOD("collect_sun", "id"),
+        &GameController::collect_sun
+    );
+
+    ClassDB::bind_method(
+        D_METHOD("get_sun_drops"),
+        &GameController::get_sun_drops
+    );
+
+    ClassDB::bind_method(
+        D_METHOD("get_zombies_data"),
+        &GameController::get_zombies_data
+    );
+
+    ClassDB::bind_method(
+        D_METHOD("get_bullets_data"),
+        &GameController::get_bullets_data
+    );
+
+    ClassDB::bind_method(
+        D_METHOD("get_plants_data"),
+        &GameController::get_plants_data
+    );
+
 }
 
 void GameController::_ready() {
@@ -184,6 +219,30 @@ bool GameController::place_plant(
 
     return true;
 }
+bool GameController::place_plant_by_type(int row, int col, int plant_type) {
+    pvz::GridPosition pos{row, col};
+    std::unique_ptr<pvz::Plant> plant;
+
+    switch (plant_type) {
+        case PlantType::PEASHOOTER:
+            plant = std::make_unique<pvz::Peashooter>(pos);
+            break;
+        case PlantType::SUNFLOWER:
+            plant = std::make_unique<pvz::Sunflower>(pos);
+            break;
+        case PlantType::WALLNUT:
+            plant = std::make_unique<pvz::WallNut>(pos);
+            break;
+        case PlantType::CHILI_PEPPER:
+            plant = std::make_unique<pvz::ChiliPepper>(pos);
+            break;
+        default:
+            return false;
+    }
+
+    return place_plant(pos, std::move(plant));
+}
+
 
 void GameController::add_zombie(
     std::unique_ptr<pvz::Zombie> zombie
@@ -339,5 +398,67 @@ void GameController::cleanup_dead_entities() {
         entities.end()
     );
 }
+Array GameController::get_sun_drops() const {
+    Array result;
+    for (const auto& s : sun_economy.get_suns()) {
+        Dictionary d;
+        d["id"] = s.id;
+        d["value"] = s.value;
+        d["row"] = s.row;
+        d["column"] = s.column;
+        d["time_left"] = s.time_left;
+        result.push_back(d);
+    }
+    return result;
+}
+
+Array GameController::get_zombies_data() const {
+    Array result;
+    for (const auto& e : entities) {
+        if (e != nullptr && e->is_alive() && e->get_type() == pvz::EntityType::ZOMBIE) {
+            auto* z = static_cast<pvz::Zombie*>(e.get());
+            Dictionary d;
+            d["row"] = z->get_position().row;
+            d["column"] = static_cast<float>(z->get_position().column);
+            d["health"] = z->get_health();
+            d["visual_state"] = static_cast<int>(z->get_visual_state());
+            d["armor"] = static_cast<int>(z->get_armor_type());
+            d["armor_health"] = z->get_armor_health();
+            result.push_back(d);
+        }
+    }
+    return result;
+}
+
+Array GameController::get_bullets_data() const {
+    Array result;
+    for (const auto& e : entities) {
+        if (e != nullptr && e->is_alive() && e->get_type() == pvz::EntityType::BULLET) {
+            auto* b = static_cast<pvz::Bullet*>(e.get());
+            Dictionary d;
+            d["row"] = b->get_position().row;
+            d["column"] = b->get_column();
+            result.push_back(d);
+        }
+    }
+    return result;
+}
+
+Array GameController::get_plants_data() const {
+    Array result;
+    for (const auto& e : entities) {
+        if (e != nullptr && e->is_alive() && e->get_type() == pvz::EntityType::PLANT) {
+            auto* p = static_cast<pvz::Plant*>(e.get());
+            Dictionary d;
+            d["row"] = p->get_position().row;
+            d["column"] = p->get_position().column;
+            d["health"] = p->get_health();
+            d["cost"] = p->get_cost();
+            result.push_back(d);
+        }
+    }
+    return result;
+}
+
 
 } // namespace godot
