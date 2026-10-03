@@ -1,11 +1,15 @@
 #include "game_controller.hpp"
 #include "bullet.hpp"
 
-#include <algorithm> // MỚI — cho std::remove_if
+#include <algorithm>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 namespace godot {
+
+GameController::GameController()
+    : wave_manager(this) {
+}
 
 void GameController::_bind_methods() {
     ClassDB::bind_method(D_METHOD("start_game"), &GameController::start_game);
@@ -16,7 +20,7 @@ void GameController::_bind_methods() {
         &GameController::finish_game
     );
     ClassDB::bind_method(D_METHOD("get_state"), &GameController::get_state);
-    ClassDB::bind_method(D_METHOD("get_sun"), &GameController::get_sun); // MỚI
+    ClassDB::bind_method(D_METHOD("get_sun"), &GameController::get_sun);
 }
 
 void GameController::_ready() {
@@ -25,6 +29,7 @@ void GameController::_ready() {
 
 void GameController::start_game() {
     state = GameState::PLAYING;
+    wave_manager.start_wave(1);
 }
 
 void GameController::pause_game() {
@@ -69,6 +74,8 @@ void GameController::spawn_bullet(
 
 void GameController::update_entities(double delta_seconds) {
     sun_economy.update(delta_seconds);
+    wave_manager.update(delta_seconds);
+
     for (const auto& entity : entities) {
         if (entity != nullptr && entity->is_alive()) {
             entity->tick_status_effects(delta_seconds);
@@ -89,24 +96,27 @@ void GameController::update_entities(double delta_seconds) {
     resolve_bullet_collisions();
     cleanup_dead_entities();
 }
+
 int GameController::get_state() const {
     return static_cast<int>(state);
 }
 
-// ==================== MỚI ====================
-
-bool GameController::place_plant(pvz::GridPosition pos, std::unique_ptr<pvz::Plant> plant) {
+bool GameController::place_plant(
+    pvz::GridPosition pos,
+    std::unique_ptr<pvz::Plant> plant
+) {
     if (plant == nullptr) {
         return false;
     }
+
     if (!grid.is_valid(pos) || grid.is_occupied(pos)) {
         return false;
     }
+
     if (sun < plant->get_cost()) {
         return false;
     }
 
-    // Chỉ thay đổi Sun và ownership sau khi Grid placement thành công.
     if (!grid.place_plant(pos, plant.get())) {
         return false;
     }
@@ -120,6 +130,7 @@ void GameController::add_zombie(std::unique_ptr<pvz::Zombie> zombie) {
     if (zombie == nullptr) {
         return;
     }
+
     zombie->set_grid(&grid);
     entities.push_back(std::move(zombie));
 }
@@ -132,11 +143,13 @@ bool GameController::has_zombie_in_row(int row) const {
             return true;
         }
     }
+
     return false;
 }
 
 std::vector<pvz::Zombie*> GameController::get_zombies_in_row(int row) const {
     std::vector<pvz::Zombie*> result;
+
     for (const auto& e : entities) {
         if (e->get_type() == pvz::EntityType::ZOMBIE &&
             e->is_alive() &&
@@ -144,10 +157,13 @@ std::vector<pvz::Zombie*> GameController::get_zombies_in_row(int row) const {
             result.push_back(static_cast<pvz::Zombie*>(e.get()));
         }
     }
+
     return result;
 }
 
-void GameController::add_sun(int amount) { sun += amount; }
+void GameController::add_sun(int amount) {
+    sun += amount;
+}
 
 int GameController::get_sun() const {
     return sun;
@@ -170,30 +186,39 @@ int GameController::collect_sun(int id) {
 const std::vector<pvz::SunDrop>& GameController::get_suns() const {
     return sun_economy.get_suns();
 }
+
 void GameController::resolve_bullet_collisions() {
-    // TODO (Core Architect): CELL_HIT_RADIUS có thể cần tinh chỉnh sau khi test thật.
     constexpr float CELL_HIT_RADIUS = 0.5f;
 
     for (const auto& be : entities) {
-        if (be->get_type() != pvz::EntityType::BULLET || !be->is_alive()) {
+        if (be->get_type() != pvz::EntityType::BULLET ||
+            !be->is_alive()) {
             continue;
         }
+
         pvz::Bullet* bullet = static_cast<pvz::Bullet*>(be.get());
 
         for (const auto& ze : entities) {
-            if (ze->get_type() != pvz::EntityType::ZOMBIE || !ze->is_alive()) {
+            if (ze->get_type() != pvz::EntityType::ZOMBIE ||
+                !ze->is_alive()) {
                 continue;
             }
+
             if (ze->get_position().row != bullet->get_position().row) {
                 continue;
             }
 
-            float dx = static_cast<float>(ze->get_position().column) - bullet->get_column();
-            if (dx < 0) dx = -dx;
+            float dx =
+                static_cast<float>(ze->get_position().column)
+                - bullet->get_column();
+
+            if (dx < 0) {
+                dx = -dx;
+            }
 
             if (dx <= CELL_HIT_RADIUS) {
                 ze->take_damage(bullet->get_damage());
-                bullet->take_damage(bullet->get_health()); // huỷ bullet ngay sau khi trúng
+                bullet->take_damage(bullet->get_health());
                 break;
             }
         }
@@ -202,14 +227,20 @@ void GameController::resolve_bullet_collisions() {
 
 void GameController::cleanup_dead_entities() {
     for (const auto& e : entities) {
-        if (!e->is_alive() && e->get_type() == pvz::EntityType::PLANT) {
+        if (!e->is_alive() &&
+            e->get_type() == pvz::EntityType::PLANT) {
             grid.remove_plant(e->get_position());
         }
     }
 
     entities.erase(
-        std::remove_if(entities.begin(), entities.end(),
-            [](const auto& e) { return !e->is_alive(); }),
+        std::remove_if(
+            entities.begin(),
+            entities.end(),
+            [](const auto& e) {
+                return !e->is_alive();
+            }
+        ),
         entities.end()
     );
 }

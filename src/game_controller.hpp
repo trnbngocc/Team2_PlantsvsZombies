@@ -8,8 +8,9 @@
 #include "entity.hpp"
 #include "grid.hpp"
 #include "sun_economy.hpp"
-#include "plant.hpp"   // MỚI
-#include "zombie.hpp"  // MỚI
+#include "plant.hpp"
+#include "zombie.hpp"
+#include "wave_manager.hpp"
 
 namespace godot {
 
@@ -37,12 +38,17 @@ private:
     // GameController owns Sun drops on the battlefield.
     pvz::SunEconomy sun_economy;
 
-    int sun = 50; // MỚI — Sun khởi điểm
+    // GameController owns and manages zombie waves.
+    WaveManager wave_manager;
+
+    int sun = 50;
 
 protected:
     static void _bind_methods();
 
 public:
+    GameController();
+
     void _ready() override;
 
     void start_game();
