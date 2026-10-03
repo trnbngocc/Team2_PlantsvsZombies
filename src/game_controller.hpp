@@ -111,8 +111,9 @@ public:
     // tự gán Grid cho Zombie.
     void add_zombie(std::unique_ptr<pvz::Zombie> zombie);
 
-    // Peashooter gọi trong act().
-    bool has_zombie_in_row(int row) const;
+    // Peashooter gọi trong act() - kiểm tra có Zombie ở cùng hàng VÀ ở phía trước cây
+    bool has_zombie_in_row(int row, float min_column = 0.0f) const;
+
 
     // ChiliPepper và các Plant khác cần danh sách Zombie thật
     // gọi hàm này trong act().

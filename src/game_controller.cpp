@@ -261,11 +261,12 @@ void GameController::add_zombie(
         static_cast<int>(entities.size())
     );
 }
-bool GameController::has_zombie_in_row(int row) const {
+bool GameController::has_zombie_in_row(int row, float min_column) const {
     for (const auto& e : entities) {
         if (e->get_type() == pvz::EntityType::ZOMBIE &&
             e->is_alive() &&
-            e->get_position().row == row) {
+            e->get_position().row == row &&
+            static_cast<float>(e->get_position().column) >= min_column) {
 
             return true;
         }
@@ -273,6 +274,7 @@ bool GameController::has_zombie_in_row(int row) const {
 
     return false;
 }
+
 
 std::vector<pvz::Zombie*> GameController::get_zombies_in_row(
     int row
