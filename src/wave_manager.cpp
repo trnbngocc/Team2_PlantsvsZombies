@@ -2,6 +2,7 @@
 #include "game_controller.hpp"
 
 #include <memory>
+#include <random>
 
 namespace godot {
 
@@ -9,6 +10,19 @@ WaveManager::WaveManager(GameController* game_controller_ref)
     : game_controller(game_controller_ref) {
 }
 
+namespace {
+    std::random_device random_device;
+    std::mt19937 random_engine(random_device());
+
+    int random_int(int min_value, int max_value) {
+        std::uniform_int_distribution<int> distribution(
+            min_value,
+            max_value
+        );
+
+        return distribution(random_engine);
+    }
+}
 void WaveManager::spawn_zombie(
     pvz::Zombie::ArmorType armor_type,
     int row,
@@ -85,29 +99,58 @@ void WaveManager::start_wave(int wave_number) {
         return;
     }
 
-    const float spawn_column = 8.0f;
+    current_wave = wave_number;
 
-    // Wave 1: 3 Regular Zombies
+    // Random number of zombies in this wave
     if (wave_number == 1) {
-        spawn_regular(0, spawn_column);
-        spawn_regular(2, spawn_column);
-        spawn_regular(4, spawn_column);
+        zombies_to_spawn = random_int(3, 5);
+    }
+    else if (wave_number == 2) {
+        zombies_to_spawn = random_int(4, 6);
+    }
+    else {
+        zombies_to_spawn = random_int(5, 8);
+    }
+
+    spawn_timer = 0.0;
+    next_spawn_delay = random_int(1,4);
+}
+
+void WaveManager::update(double delta_seconds) {
+    if (game_controller == nullptr) {
         return;
     }
 
-    // Wave 2: Regular + Conehead
-    if (wave_number == 2) {
-        spawn_regular(0, spawn_column);
-        spawn_regular(2, spawn_column);
-        spawn_conehead(4, spawn_column);
+    if (zombies_to_spawn <= 0) {
         return;
     }
 
-    // Wave 3: Regular + Conehead + Buckethead
-    spawn_regular(0, spawn_column);
-    spawn_conehead(1, spawn_column);
-    spawn_regular(2, spawn_column);
-    spawn_buckethead(3, spawn_column);
+    spawn_timer += delta_seconds;
+
+    if (spawn_timer < next_spawn_delay) {
+        return;
+    }
+
+    // Random row from 0 to 4
+    int row = random_int(0, 4);
+
+    // Random zombie type
+    int zombie_type = random_int(0, 2);
+
+    if (zombie_type == 0) {
+        spawn_regular(row, 8.0f);
+    }
+    else if (zombie_type == 1) {
+        spawn_conehead(row, 8.0f);
+    }
+    else {
+        spawn_buckethead(row, 8.0f);
+    }
+
+    zombies_to_spawn--;
+
+    spawn_timer = 0.0;
+    next_spawn_delay = random_int(1, 4);
 }
 
 } // namespace godot

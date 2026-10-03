@@ -16,6 +16,9 @@ public:
 
     void start_wave(int wave_number);
 
+    // Update wave timing
+    void update(double delta_seconds);
+
 private:
     void spawn_zombie(
         pvz::Zombie::ArmorType armor_type,
@@ -24,6 +27,14 @@ private:
     );
 
     GameController* game_controller = nullptr;
+
+    // Wave state
+    int current_wave = 0;
+    int zombies_to_spawn = 0;
+
+    // Timer for next zombie
+    double spawn_timer = 0.0;
+    double next_spawn_delay = 0.0;
 };
 
 } // namespace godot
