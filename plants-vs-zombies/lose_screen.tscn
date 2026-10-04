@@ -10,17 +10,19 @@ grow_vertical = 2
 
 [node name="Label" type="Label" parent="." unique_id=93195049]
 layout_mode = 0
-offset_left = -136.0
-offset_top = -72.0
-offset_right = -60.0
-offset_bottom = -49.0
+offset_left = 400.0
+offset_top = 300.0
+offset_right = 482.0
+offset_bottom = 323.0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
 text = "YOU LOSE!"
 
-[node name="Label2" type="Label" parent="." unique_id=956267043]
+[node name="Label2" type="Button" parent="." unique_id=1813285169]
 layout_mode = 0
-offset_left = 54.0
-offset_top = -73.0
-offset_right = 134.0
-offset_bottom = -24.0
+offset_left = 579.0
+offset_top = 297.0
+offset_right = 667.0
+offset_bottom = 346.0
+theme_override_colors/font_color = Color(1, 1, 0, 1)
 text = "Play Again
 "
