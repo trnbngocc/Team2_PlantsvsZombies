@@ -9,6 +9,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Button" type="Button" parent="." unique_id=929212517]
+custom_minimum_size = Vector2(120, 50)
 layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
