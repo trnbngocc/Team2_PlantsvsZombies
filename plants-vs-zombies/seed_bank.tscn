@@ -24,6 +24,7 @@ offset_bottom = 40.0
 custom_minimum_size = Vector2(70, 90)
 layout_mode = 2
 text = "Sunflower
+50
 "
 icon_alignment = 1
 
@@ -33,6 +34,7 @@ offset_left = -17.0
 offset_top = -5.0
 offset_right = 823.0
 offset_bottom = 675.0
+rotation = -0.0003785921
 scale = Vector2(0.145, 0.145)
 texture = ExtResource("1_2unkb")
 
@@ -40,6 +42,7 @@ texture = ExtResource("1_2unkb")
 custom_minimum_size = Vector2(70, 90)
 layout_mode = 2
 text = "Peashooter
+100
 "
 icon_alignment = 1
 
@@ -56,6 +59,8 @@ texture = ExtResource("2_bgaly")
 custom_minimum_size = Vector2(70, 90)
 layout_mode = 2
 text = "WallNut
+50
+
 "
 icon_alignment = 1
 
@@ -70,7 +75,8 @@ texture = ExtResource("3_jhsbr")
 [node name="CherryBomb" type="Button" parent="HBoxContainer" unique_id=432457655]
 custom_minimum_size = Vector2(70, 90)
 layout_mode = 2
-text = "Chili "
+text = "Chili 
+150"
 icon_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="HBoxContainer/CherryBomb" unique_id=1300863917]
