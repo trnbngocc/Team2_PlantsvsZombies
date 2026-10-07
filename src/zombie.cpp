@@ -18,7 +18,8 @@ Zombie::Zombie(
       speed(initial_speed),
       armor_type(initial_armor),
       armor_health(std::max(0, initial_armor_health)),
-      column_position(static_cast<float>(initial_position.column)) {
+      column_position(static_cast<float>(initial_position.column)),
+      max_health(std::max(0, initial_health)) {
 }
 
 EntityType Zombie::get_type() const {
@@ -49,16 +50,39 @@ bool Zombie::has_armor() const {
     return armor_type != ArmorType::NONE && armor_health > 0;
 }
 
-void Zombie::take_damage(int amount) {
+Zombie::VisualState Zombie::get_visual_state() const {
+    // Zombie đã chết.
+    if (!is_alive() || get_health() <= 0) {
+        return VisualState::DEAD;
+    }
+
+    // Zombie còn sống nhưng HP <= 50% HP tối đa.
+    //
+    // Dùng phép nhân để tránh vấn đề chia số nguyên:
+    //     health * 2 <= max_health
+    //
+    // Ví dụ:
+    //     max = 100, hp = 50  -> ONE_ARM_LOST
+    //     max = 100, hp = 51  -> NORMAL
+    //     max = 101, hp = 50  -> ONE_ARM_LOST
+    //     max = 101, hp = 51  -> ONE_ARM_LOST
+    if (max_health > 0 &&
+        get_health() * 2 <= max_health) {
+        return VisualState::ONE_ARM_LOST;
+    }
+
+    return VisualState::NORMAL;
+}
+
+void Zombie::receive_damage(int amount) {
     if (amount <= 0 || !active) {
         return;
     }
 
-    // Nếu Zombie còn giáp, sát thương sẽ đánh vào giáp trước.
+    // Armor hấp thụ damage trước.
     if (has_armor()) {
         armor_health = std::max(0, armor_health - amount);
 
-        // Giáp vỡ thì bỏ trạng thái giáp.
         if (armor_health == 0) {
             armor_type = ArmorType::NONE;
         }
@@ -66,8 +90,8 @@ void Zombie::take_damage(int amount) {
         return;
     }
 
-    // Không còn giáp thì sát thương đánh trực tiếp vào thân Zombie.
-    Entity::take_damage(amount);
+    // Sau khi armor hết, damage mới đi vào HP.
+    Entity::receive_damage(amount);
 }
 
 void Zombie::set_grid(Grid* grid_ref) {
@@ -83,6 +107,10 @@ void Zombie::default_update(double delta_seconds) {
 
     Plant* blocker = grid->get_plant_at(current);
 
+    // Có Plant trong cùng ô -> Zombie ăn Plant.
+    //
+    // ONE_ARM_LOST không ảnh hưởng damage hoặc attack interval.
+    // Zombie vẫn sử dụng đúng một logic attack duy nhất.
     if (blocker != nullptr && blocker->is_alive()) {
         attack_cooldown += delta_seconds;
 
@@ -90,7 +118,9 @@ void Zombie::default_update(double delta_seconds) {
             attack_cooldown -= ATTACK_INTERVAL;
             blocker->take_damage(damage);
         }
-    } else {
+    }
+    else {
+        // Không có Plant -> Zombie tiếp tục đi sang trái.
         column_position -= speed * static_cast<float>(delta_seconds);
 
         set_position(
